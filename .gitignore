@@ -5,3 +5,5 @@
 build
 
 lib/bin/
+lib/gradle.properties
+.vscode/
