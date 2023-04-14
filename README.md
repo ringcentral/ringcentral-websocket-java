@@ -24,4 +24,5 @@ dependencies {
 </dependency>
 ```
 
-Don't forget to replace the `[version]` with the expected version. You can find the latest version in [Maven Central](https://central.sonatype.com/search?q=ringcentral-websocket).
+Don't forget to replace the `[version]` with the expected version. You can find the latest version
+in [Maven Central](https://central.sonatype.com/search?q=ringcentral-websocket).
