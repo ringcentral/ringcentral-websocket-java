@@ -19,6 +19,7 @@ repositories {
 dependencies {
     // Use JUnit test framework.
     testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.slf4j:slf4j-simple:1.6.2'
     implementation group: 'com.ringcentral', name: 'ringcentral', version: '2.9.0'
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
     implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.10.0'

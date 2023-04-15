@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class LibraryTest {
     @Test
-    public void defaultTest() throws RestException, IOException {
+    public void defaultTest() throws RestException, IOException, InterruptedException {
         RestClient rc = new RestClient(
                 System.getenv("RINGCENTRAL_CLIENT_ID"),
                 System.getenv("RINGCENTRAL_CLIENT_SECRET"),
@@ -27,6 +27,9 @@ public class LibraryTest {
         );
         subscription.subscribe();
 
+        Thread.sleep(10000); // sleep for 10 seconds
+
         rc.revoke();
+        System.out.println("quiting");
     }
 }
