@@ -2,6 +2,8 @@ package com.ringcentral.websocket;
 
 import com.ringcentral.RestClient;
 import com.ringcentral.RestException;
+import com.ringcentral.definitions.CreateInternalTextMessageRequest;
+import com.ringcentral.definitions.PagerCallerInfoRequest;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -27,7 +29,15 @@ public class LibraryTest {
         );
         subscription.subscribe();
 
-        Thread.sleep(10000); // sleep for 10 seconds
+        Thread.sleep(5000);
+
+        rc.restapi().account().extension().companyPager().post(
+                new CreateInternalTextMessageRequest().from(new PagerCallerInfoRequest().extensionNumber("101"))
+                        .to(new PagerCallerInfoRequest[]{new PagerCallerInfoRequest().extensionNumber("101")})
+                        .text("Hello world")
+        );
+
+        Thread.sleep(20000); // sleep for 10 seconds
 
         rc.revoke();
         System.out.println("quiting");
