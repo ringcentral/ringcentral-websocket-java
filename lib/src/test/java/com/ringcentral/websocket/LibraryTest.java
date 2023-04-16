@@ -25,6 +25,7 @@ public class LibraryTest {
         Subscription subscription = new Subscription(rc,
                 new String[]{"/restapi/v1.0/account/~/extension/~/message-store"},
                 (jsonString) -> {
+                    System.out.println(jsonString);
                 }
         );
         subscription.subscribe();

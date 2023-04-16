@@ -1,5 +1,8 @@
 package com.ringcentral.websocket;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.ringcentral.RestClient;
 import com.ringcentral.Utils;
 import okhttp3.ResponseBody;
@@ -8,6 +11,12 @@ import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
 import java.util.UUID;
+
+class WsToken {
+    public String uri;
+    public String ws_access_token;
+    public int expires_in;
+}
 
 class RequestHeaders {
     public String type;
@@ -61,6 +70,12 @@ class MyWebSocketClient extends WebSocketClient {
     @Override
     public void onMessage(String message) {
         System.out.println("onMessage: " + message);
+        if(message.contains("\"type\":\"ServerNotification\"")) {
+            JsonElement jsonElement = JsonParser.parseString(message);
+            JsonArray jsonArray = jsonElement.getAsJsonArray();
+            String secondObjectString = jsonArray.get(1).toString();
+            this._eventListener.listen(secondObjectString);
+        }
     }
 
     @Override
