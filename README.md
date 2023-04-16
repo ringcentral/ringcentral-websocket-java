@@ -40,3 +40,25 @@ Subscription subscription = new Subscription(rc,
 
 subscription.subscribe();
 ```
+
+
+## For maintainers
+
+
+### Test
+
+```
+./gradlew test
+```
+
+### Release
+
+Update the version number in `build.gradle`.
+
+```
+./gradlew publish
+```
+
+Go to https://s01.oss.sonatype.org/#stagingRepositories
+
+Login, "Close" and "Release" the SDK.
