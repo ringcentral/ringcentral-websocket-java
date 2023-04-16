@@ -8,6 +8,9 @@ import org.junit.Test;
 
 import java.io.IOException;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 public class LibraryTest {
     @Test
     public void defaultTest() throws RestException, IOException, InterruptedException {
@@ -22,15 +25,15 @@ public class LibraryTest {
                 System.getenv("RINGCENTRAL_EXTENSION"),
                 System.getenv("RINGCENTRAL_PASSWORD")
         );
+        final String[] message = {null};
         Subscription subscription = new Subscription(rc,
                 new String[]{"/restapi/v1.0/account/~/extension/~/message-store"},
                 (jsonString) -> {
-                    System.out.println(jsonString);
+                   message[0] = jsonString;
                 }
         );
-        subscription.subscribe();
 
-        Thread.sleep(5000);
+        subscription.subscribe();
 
         rc.restapi().account().extension().companyPager().post(
                 new CreateInternalTextMessageRequest().from(new PagerCallerInfoRequest().extensionNumber("101"))
@@ -38,7 +41,10 @@ public class LibraryTest {
                         .text("Hello world")
         );
 
-        Thread.sleep(20000); // sleep for 10 seconds
+        Thread.sleep(20000);
+
+        assertNotNull(message[0]);
+        assertTrue(message[0].contains("uuid"));
 
         rc.revoke();
         System.out.println("quiting");

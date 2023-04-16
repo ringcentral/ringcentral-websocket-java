@@ -94,6 +94,8 @@ public class Subscription {
     private String[] _eventFilters;
     private EventListener _eventListener;
 
+    private MyWebSocketClient myClient;
+
     public Subscription(RestClient restClient, String[] eventFilters, EventListener eventListener) {
         this._restClient = restClient;
         this._eventFilters = eventFilters;
@@ -104,7 +106,15 @@ public class Subscription {
         ResponseBody responseBody = this._restClient.post("/restapi/oauth/wstoken");
         WsToken wsToken = Utils.gson.fromJson(responseBody.string(), WsToken.class);
         String wsUri = wsToken.uri + "?access_token=" + wsToken.ws_access_token;
-        MyWebSocketClient myClient = new MyWebSocketClient(URI.create(wsUri), _eventFilters, _eventListener);
+        myClient = new MyWebSocketClient(URI.create(wsUri), _eventFilters, _eventListener);
         myClient.connect();
+    }
+
+    public void refresh() {
+        // no need to refresh
+    }
+
+    public void revoke() {
+        myClient.close();
     }
 }
