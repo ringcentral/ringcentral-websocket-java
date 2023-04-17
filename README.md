@@ -1,10 +1,18 @@
 # RingCentral WebSocket SDK for Java
 
+# RingCentral PubNub SDK for Java
+
+This project is an extension of the [RingCentral SDK for Java](https://github.com/ringcentral/ringcentral-java) project.
+
+## Getting help and support
+
+If you are having difficulty using this SDK, or working with the RingCentral API, please visit our [developer community forums](https://community.ringcentral.com/spaces/144/) for help and to get quick answers to your questions. If you wish to contact the RingCentral Developer Support team directly, please [submit a help ticket](https://developers.ringcentral.com/support/create-case) from our developer website.
+
 ## Installation
 
 ### Gradle
 
-```
+```groovy
 repositories {
   mavenCentral()
 }
@@ -31,6 +39,9 @@ in [Maven Central](https://mvnrepository.com/artifact/com.ringcentral/ringcentra
 ### Sample usage
 
 ```java
+RestClient rc = new RestClient(clientId, clientSecret, server);
+rc.authorize(jwtToken);
+
 Subscription subscription = new Subscription(rc,
     new String[]{"/restapi/v1.0/account/~/extension/~/message-store"},
     (jsonString) -> {
