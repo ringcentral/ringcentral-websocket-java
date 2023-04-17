@@ -4,6 +4,8 @@
 
 This project is an extension of the [RingCentral SDK for Java](https://github.com/ringcentral/ringcentral-java) project.
 
+You will need to install the RingCentral SDK for Java first.
+
 ## Getting help and support
 
 If you are having difficulty using this SDK, or working with the RingCentral API, please visit our [developer community forums](https://community.ringcentral.com/spaces/144/) for help and to get quick answers to your questions. If you wish to contact the RingCentral Developer Support team directly, please [submit a help ticket](https://developers.ringcentral.com/support/create-case) from our developer website.
@@ -39,6 +41,9 @@ in [Maven Central](https://mvnrepository.com/artifact/com.ringcentral/ringcentra
 ### Sample usage
 
 ```java
+import com.ringcentral.RestClient;
+import com.ringcentral.websocket.Subscription;
+
 RestClient rc = new RestClient(clientId, clientSecret, server);
 rc.authorize(jwtToken);
 
