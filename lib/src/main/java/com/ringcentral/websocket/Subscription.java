@@ -48,7 +48,6 @@ class MyWebSocketClient extends WebSocketClient {
 
     @Override
     public void onOpen(ServerHandshake handshakedata) {
-        System.out.println("onOpen");
         SubscriptionRequestBody requestBody = new SubscriptionRequestBody();
         requestBody.deliveryMode = new SubscriptionRequestBodyDeliveryMode();
         requestBody.deliveryMode.transportType = "WebSocket";
@@ -69,7 +68,6 @@ class MyWebSocketClient extends WebSocketClient {
 
     @Override
     public void onMessage(String message) {
-        System.out.println("onMessage: " + message);
         if(message.contains("\"type\":\"ServerNotification\"")) {
             JsonElement jsonElement = JsonParser.parseString(message);
             JsonArray jsonArray = jsonElement.getAsJsonArray();
@@ -80,12 +78,12 @@ class MyWebSocketClient extends WebSocketClient {
 
     @Override
     public void onClose(int code, String reason, boolean remote) {
-        System.out.println("onClose: " + code + " " + reason);
+
     }
 
     @Override
     public void onError(Exception ex) {
-        System.out.println("onError");
+
     }
 }
 
