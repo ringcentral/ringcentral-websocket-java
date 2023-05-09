@@ -15,30 +15,29 @@ public class LibraryTest {
     @Test
     public void defaultTest() throws RestException, IOException, InterruptedException {
         RestClient rc = new RestClient(
-                System.getenv("RINGCENTRAL_CLIENT_ID"),
-                System.getenv("RINGCENTRAL_CLIENT_SECRET"),
-                System.getenv("RINGCENTRAL_SERVER_URL")
+            System.getenv("RINGCENTRAL_CLIENT_ID"),
+            System.getenv("RINGCENTRAL_CLIENT_SECRET"),
+            System.getenv("RINGCENTRAL_SERVER_URL")
         );
 
         rc.authorize(
-                System.getenv("RINGCENTRAL_USERNAME"),
-                System.getenv("RINGCENTRAL_EXTENSION"),
-                System.getenv("RINGCENTRAL_PASSWORD")
+            System.getenv("RINGCENTRAL_JWT_TOKEN")
         );
         final String[] message = {null};
         Subscription subscription = new Subscription(rc,
-                new String[]{"/restapi/v1.0/account/~/extension/~/message-store"},
-                (jsonString) -> {
-                   message[0] = jsonString;
-                }
+            new String[]{"/restapi/v1.0/account/~/extension/~/message-store"},
+            (jsonString) -> {
+                message[0] = jsonString;
+            }
         );
 
         subscription.subscribe();
 
+        // send a company pager to trigger notifications
         rc.restapi().account().extension().companyPager().post(
-                new CreateInternalTextMessageRequest().from(new PagerCallerInfoRequest().extensionNumber("101"))
-                        .to(new PagerCallerInfoRequest[]{new PagerCallerInfoRequest().extensionNumber("101")})
-                        .text("Hello world")
+            new CreateInternalTextMessageRequest().from(new PagerCallerInfoRequest().extensionNumber("101"))
+                .to(new PagerCallerInfoRequest[]{new PagerCallerInfoRequest().extensionNumber("101")})
+                .text("Hello world")
         );
 
         Thread.sleep(20000);
