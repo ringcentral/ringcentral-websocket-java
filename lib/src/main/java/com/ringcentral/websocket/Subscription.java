@@ -10,6 +10,8 @@ import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 class WsToken {
@@ -40,14 +42,17 @@ class MyWebSocketClient extends WebSocketClient {
     private String[] _eventFilters;
     private EventListener _eventListener;
 
+    private Timer timer;
+
     public MyWebSocketClient(URI serverUri, String[] eventFilters, EventListener eventListener) {
         super(serverUri);
         this._eventFilters = eventFilters;
         this._eventListener = eventListener;
+        this.timer = new Timer();
     }
 
     @Override
-    public void onOpen(ServerHandshake handshakedata) {
+    public void onOpen(ServerHandshake handshakeData) {
         SubscriptionRequestBody requestBody = new SubscriptionRequestBody();
         requestBody.deliveryMode = new SubscriptionRequestBodyDeliveryMode();
         requestBody.deliveryMode.transportType = "WebSocket";
@@ -64,6 +69,16 @@ class MyWebSocketClient extends WebSocketClient {
         array[1] = requestBody;
 
         this.send(Utils.gson.toJson(array));
+        timer.scheduleAtFixedRate(new TimerTask() {
+                    public void run() {
+                        RequestHeaders requestHeaders = new RequestHeaders();
+                        requestHeaders.type = "Heartbeat";
+                        requestHeaders.messageId = UUID.randomUUID().toString();
+                        Object[] array = new Object[1];
+                        array[0] = requestHeaders;
+                        MyWebSocketClient.this.send(Utils.gson.toJson(array));
+                    }
+                }, 600000, 600000);  // run 10 minutes
     }
 
     @Override
@@ -85,6 +100,11 @@ class MyWebSocketClient extends WebSocketClient {
     public void onError(Exception ex) {
 
     }
+
+    public void revoke() {
+        this.timer.cancel();
+        this.close();
+    }
 }
 
 public class Subscription {
@@ -92,7 +112,7 @@ public class Subscription {
     private String[] _eventFilters;
     private EventListener _eventListener;
 
-    private MyWebSocketClient myClient;
+    public MyWebSocketClient webSocketClient;
 
     public Subscription(RestClient restClient, String[] eventFilters, EventListener eventListener) {
         this._restClient = restClient;
@@ -104,15 +124,11 @@ public class Subscription {
         ResponseBody responseBody = this._restClient.post("/restapi/oauth/wstoken");
         WsToken wsToken = Utils.gson.fromJson(responseBody.string(), WsToken.class);
         String wsUri = wsToken.uri + "?access_token=" + wsToken.ws_access_token;
-        myClient = new MyWebSocketClient(URI.create(wsUri), _eventFilters, _eventListener);
-        myClient.connect();
-    }
-
-    public void refresh() {
-        // no need to refresh
+        webSocketClient = new MyWebSocketClient(URI.create(wsUri), _eventFilters, _eventListener);
+        webSocketClient.connect();
     }
 
     public void revoke() {
-        myClient.close();
+        webSocketClient.revoke();
     }
 }
