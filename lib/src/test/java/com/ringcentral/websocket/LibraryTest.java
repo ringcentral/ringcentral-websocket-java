@@ -35,8 +35,8 @@ public class LibraryTest {
 
         // send a company pager to trigger notifications
         rc.restapi().account().extension().companyPager().post(
-            new CreateInternalTextMessageRequest().from(new PagerCallerInfoRequest().extensionNumber("101"))
-                .to(new PagerCallerInfoRequest[]{new PagerCallerInfoRequest().extensionNumber("101")})
+            new CreateInternalTextMessageRequest().from(new PagerCallerInfoRequest().extensionId(rc.token.owner_id))
+                .to(new PagerCallerInfoRequest[]{new PagerCallerInfoRequest().extensionId(rc.token.owner_id)})
                 .text("Hello world")
         );
 

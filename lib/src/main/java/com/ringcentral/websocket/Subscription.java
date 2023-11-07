@@ -78,7 +78,7 @@ class MyWebSocketClient extends WebSocketClient {
                         array[0] = requestHeaders;
                         MyWebSocketClient.this.send(Utils.gson.toJson(array));
                     }
-                }, 600000, 600000);  // run 10 minutes
+                }, 600000, 600000);  // send a heartbeat every 10 minutes
     }
 
     @Override
@@ -93,12 +93,10 @@ class MyWebSocketClient extends WebSocketClient {
 
     @Override
     public void onClose(int code, String reason, boolean remote) {
-
     }
 
     @Override
     public void onError(Exception ex) {
-
     }
 
     public void revoke() {
