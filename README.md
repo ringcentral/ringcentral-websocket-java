@@ -67,7 +67,16 @@ If for some reason your OAuth session got revoked/invalidated, or you just want 
 
 There are other cases that the underlying WebSocket connection will be closed. One example: there is an `absoluteTimeout` value enforced by RingCentral server side. It means that the WebSocket connection will be closed after this timeout. The default value is 24 hours. Another example: there is network outage, and WebSocket connection closed due to network outage. In these cases, you need to re-subscribe the subscription: `subscription.subscribe()`.
 
+But how do you detect that the underlying WebSocket connection is closed? Please check the sample code:
 
+```java
+subscription.webSocketClient.closeListener = new CloseListener() {
+    @Override
+    public void listen(int code, String reason, boolean remote) {
+        subscription.subscribe();
+    }
+};
+```
 
 
 ## For maintainers
