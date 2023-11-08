@@ -27,23 +27,21 @@ class RequestHeaders {
     public String path;
 }
 
-class SubscriptionRequestBody
-{
+class SubscriptionRequestBody {
     public SubscriptionRequestBodyDeliveryMode deliveryMode;
     public String[] eventFilters;
 }
-class SubscriptionRequestBodyDeliveryMode
-{
+
+class SubscriptionRequestBodyDeliveryMode {
     public String transportType;
 }
 
 class MyWebSocketClient extends WebSocketClient {
 
     public CloseListener closeListener;
-
+    public boolean debugMode = false;
     private String[] _eventFilters;
     private EventListener _eventListener;
-
     private Timer timer;
 
     public MyWebSocketClient(URI serverUri, String[] eventFilters, EventListener eventListener) {
@@ -73,20 +71,23 @@ class MyWebSocketClient extends WebSocketClient {
 
         this.send(Utils.gson.toJson(array));
         timer.scheduleAtFixedRate(new TimerTask() {
-                    public void run() {
-                        RequestHeaders requestHeaders = new RequestHeaders();
-                        requestHeaders.type = "Heartbeat";
-                        requestHeaders.messageId = UUID.randomUUID().toString();
-                        Object[] array = new Object[1];
-                        array[0] = requestHeaders;
-                        MyWebSocketClient.this.send(Utils.gson.toJson(array));
-                    }
-                }, 600000, 600000);  // send a heartbeat every 10 minutes
+            public void run() {
+                RequestHeaders requestHeaders = new RequestHeaders();
+                requestHeaders.type = "Heartbeat";
+                requestHeaders.messageId = UUID.randomUUID().toString();
+                Object[] array = new Object[1];
+                array[0] = requestHeaders;
+                MyWebSocketClient.this.send(Utils.gson.toJson(array));
+            }
+        }, 600000, 600000);  // send a heartbeat every 10 minutes
     }
 
     @Override
     public void onMessage(String message) {
-        if(message.contains("\"type\":\"ServerNotification\"")) {
+        if (this.debugMode) {
+            System.out.println("[debug mode] inbound message: " + message);
+        }
+        if (message.contains("\"type\":\"ServerNotification\"")) {
             JsonElement jsonElement = JsonParser.parseString(message);
             JsonArray jsonArray = jsonElement.getAsJsonArray();
             String secondObjectString = jsonArray.get(1).toString();
@@ -96,7 +97,7 @@ class MyWebSocketClient extends WebSocketClient {
 
     @Override
     public void onClose(int code, String reason, boolean remote) {
-        if(closeListener != null) {
+        if (closeListener != null) {
             closeListener.listen(code, reason, remote);
         }
     }
@@ -109,14 +110,21 @@ class MyWebSocketClient extends WebSocketClient {
         this.timer.cancel();
         this.close();
     }
+
+    @Override
+    public void send(String text) {
+        if (this.debugMode) {
+            System.out.println("[debug-mode] outbound message: " + text);
+        }
+        super.send(text);
+    }
 }
 
 public class Subscription {
+    public MyWebSocketClient webSocketClient;
     private RestClient _restClient;
     private String[] _eventFilters;
     private EventListener _eventListener;
-
-    public MyWebSocketClient webSocketClient;
 
     public Subscription(RestClient restClient, String[] eventFilters, EventListener eventListener) {
         this._restClient = restClient;

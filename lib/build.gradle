@@ -1,8 +1,8 @@
 plugins {
-  id 'java'
-  id 'maven-publish'
-  id 'java-library'
-  id 'signing'
+    id 'java'
+    id 'maven-publish'
+    id 'java-library'
+    id 'signing'
 }
 
 group 'com.ringcentral'
@@ -25,69 +25,69 @@ dependencies {
 }
 
 java {
-  withJavadocJar()
-  withSourcesJar()
+    withJavadocJar()
+    withSourcesJar()
 }
 
 publishing {
-  publications {
-    mavenJava(MavenPublication) {
-      artifactId = 'ringcentral-websocket'
-      from components.java
-      versionMapping {
-        usage('java-api') {
-          fromResolutionOf('runtimeClasspath')
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = 'ringcentral-websocket'
+            from components.java
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
+            pom {
+                name = 'RingCentral WebSocket SDK'
+                description = 'RingCentral WebSocket SDK'
+                url = 'https://github.com/ringcentral/ringcentral-websocket-java'
+                licenses {
+                    license {
+                        name = 'MIT'
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'tylerliu'
+                        name = 'Tyler Liu'
+                        email = 'tyler.liu@ringcentral.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://git@github.com:ringcentral/ringcentral-websocket-java.git'
+                    developerConnection = 'scm:git:ssh://git@github.com:ringcentral/ringcentral-websocket-java.git'
+                    url = 'https://github.com/ringcentral/ringcentral-websocket-java'
+                }
+            }
         }
-        usage('java-runtime') {
-          fromResolutionResult()
-        }
-      }
-      pom {
-        name = 'RingCentral WebSocket SDK'
-        description = 'RingCentral WebSocket SDK'
-        url = 'https://github.com/ringcentral/ringcentral-websocket-java'
-        licenses {
-          license {
-            name = 'MIT'
-            url = 'https://opensource.org/licenses/MIT'
-          }
-        }
-        developers {
-          developer {
-            id = 'tylerliu'
-            name = 'Tyler Liu'
-            email = 'tyler.liu@ringcentral.com'
-          }
-        }
-        scm {
-          connection = 'scm:git:git://git@github.com:ringcentral/ringcentral-websocket-java.git'
-          developerConnection = 'scm:git:ssh://git@github.com:ringcentral/ringcentral-websocket-java.git'
-          url = 'https://github.com/ringcentral/ringcentral-websocket-java'
-        }
-      }
     }
-  }
-  repositories {
-    maven {
-      url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
-      credentials {
-        username = ossrhUsername
-        password = ossrhPassword
-      }
+    repositories {
+        maven {
+            url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            credentials {
+                username = ossrhUsername
+                password = ossrhPassword
+            }
+        }
     }
-  }
 }
 
 signing {
-  sign publishing.publications.mavenJava
+    sign publishing.publications.mavenJava
 }
 
 javadoc {
-  options.addBooleanOption('html5', true)
+    options.addBooleanOption('html5', true)
 }
 
 test {
-  testLogging {
-    exceptionFormat = 'full'
-  }
+    testLogging {
+        exceptionFormat = 'full'
+    }
 }
