@@ -8,8 +8,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class LibraryTest {
     @Test
@@ -47,5 +46,42 @@ public class LibraryTest {
 
         rc.revoke();
         System.out.println("quiting");
+    }
+
+    @Test
+    public void closeTest() throws RestException, IOException, InterruptedException {
+        RestClient rc = new RestClient(
+                System.getenv("RINGCENTRAL_CLIENT_ID"),
+                System.getenv("RINGCENTRAL_CLIENT_SECRET"),
+                System.getenv("RINGCENTRAL_SERVER_URL")
+        );
+
+        rc.authorize(
+                System.getenv("RINGCENTRAL_JWT_TOKEN")
+        );
+        Subscription subscription = new Subscription(rc,
+                new String[]{"/restapi/v1.0/account/~/extension/~/message-store"},
+                (jsonString) -> {
+                }
+        );
+
+        subscription.subscribe();
+
+        final boolean[] closed = {false};
+        subscription.webSocketClient.closeListener = new CloseListener() {
+            @Override
+            public void listen(int code, String reason, boolean remote) {
+                closed[0] = true;
+            }
+        };
+
+        Thread.sleep(5000); // wait for connection stable
+
+        assertFalse(closed[0]);
+        subscription.revoke();
+        System.out.println("quiting");
+        Thread.sleep(3000);
+        assertTrue(closed[0]);
+        rc.revoke();
     }
 }

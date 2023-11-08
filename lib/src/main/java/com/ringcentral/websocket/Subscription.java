@@ -39,6 +39,8 @@ class SubscriptionRequestBodyDeliveryMode
 
 class MyWebSocketClient extends WebSocketClient {
 
+    public CloseListener closeListener;
+
     private String[] _eventFilters;
     private EventListener _eventListener;
 
@@ -49,6 +51,7 @@ class MyWebSocketClient extends WebSocketClient {
         this._eventFilters = eventFilters;
         this._eventListener = eventListener;
         this.timer = new Timer();
+        this.setConnectionLostTimeout(30);
     }
 
     @Override
@@ -93,6 +96,9 @@ class MyWebSocketClient extends WebSocketClient {
 
     @Override
     public void onClose(int code, String reason, boolean remote) {
+        if(closeListener != null) {
+            closeListener.listen(code, reason, remote);
+        }
     }
 
     @Override

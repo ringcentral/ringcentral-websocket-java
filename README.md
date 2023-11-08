@@ -36,7 +36,7 @@ Don't forget to replace the `[version]` with the expected version. You can find 
 in [Maven Central](https://mvnrepository.com/artifact/com.ringcentral/ringcentral-websocket).
 
 
-### Sample usage
+## Sample usage
 
 ```java
 import com.ringcentral.RestClient;
@@ -54,6 +54,20 @@ Subscription subscription = new Subscription(rc,
 
 subscription.subscribe();
 ```
+
+
+## How to keep it running 24 * 7?
+
+The subscription shares the OAuth session with the `RestClient rc` object. If the OAuth session expires, the subscription will be automatically stopped. So you need to maintain a long-lived OAuth session to keep the subscription running 24 * 7.
+Before your OAuth session expires, you need to `rc.refresh()` to refresh the OAuth session. You can do it in a timer task every 30 minutes. The OAuth session expires in 1 hour, it is OK to refresh it every 30 minutes, there is no need to refresh it in a shorter interval.
+
+If for some reason your OAuth session got expired (access token expired but refresh token still valid), you need to `rc.refresh()` and then re-subscribe the subscription: `subscription.subscribe()`. It is because, as soon as your access token expired, the underlying WebSocket connection will be closed. 
+
+If for some reason your OAuth session got revoked/invalidated, or you just want to use a new OAuth session. you need to re-authorize the `rc.authorize(...)` and then re-subscribe the subscription: `subscription.subscribe()`. It is because, as soon as your access token got revoked/invalidated, the underlying WebSocket connection will be closed.
+
+There are other cases that the underlying WebSocket connection will be closed. One example: there is an `absoluteTimeout` value enforced by RingCentral server side. It means that the WebSocket connection will be closed after this timeout. The default value is 24 hours. Another example: there is network outage, and WebSocket connection closed due to network outage. In these cases, you need to re-subscribe the subscription: `subscription.subscribe()`.
+
+
 
 
 ## For maintainers
