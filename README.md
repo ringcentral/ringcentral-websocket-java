@@ -46,16 +46,16 @@ import com.ringcentral.RestClient;
 import com.ringcentral.websocket.Subscription;
 
 RestClient rc=new RestClient(clientId,clientSecret,server);
-        rc.authorize(jwtToken);
+rc.authorize(jwtToken);
 
-        Subscription subscription=new Subscription(rc,
-        new String[]{"/restapi/v1.0/account/~/extension/~/message-store"},
-        (jsonString)->{
-        // do something with the json string
-        }
-        );
+Subscription subscription=new Subscription(rc,
+new String[]{"/restapi/v1.0/account/~/extension/~/message-store"},
+    (jsonString)->{
+      // do something with the json string
+    }
+);
 
-        subscription.subscribe();
+subscription.subscribe();
 ```
 
 ## How to keep it running 24 * 7?
@@ -87,8 +87,8 @@ subscription.webSocketClient.closeListener=new CloseListener(){
 @Override
 public void listen(int code,String reason,boolean remote){
         subscription.subscribe();
-        }
-        };
+    }
+};
 ```
 
 ## Debug mode
